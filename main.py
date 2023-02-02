@@ -2,52 +2,23 @@ def get_sum(x, y):
     """Возвращает сумму всех цифр в координатах."""
     return sum(map(int, str(x)+str(y)))
 
+def ant_walking(x, y):
 
-def get_max(x, y):
-    """
-    Ищет максимальное значение, которое может принять какая-либо из
-    координат, если сумма цифр в обеих координатах не превышает 25.
-    """
-    while get_sum(x, y) < 25:
-        x += 1
-    return x
+    visited = []
+    to_visit = [(x, y)]
 
+    while to_visit:
 
-def ant_walking(start_x, start_y):
-
-    x, y = start_x, start_y
-    count = 0  # Стартовую точку зачтем при первом проходе цикла.
-
-    while y < get_max(start_x, start_y):
-
-        count += 1  # Считаем проход валидного ряда по оси "у".
-
-        while get_sum(x, y) < 25: # Вложенный цикл для движения вправо.
-            x += 1
-            count += 1
-
-        # Возвращаем муравья на клетку назад и
-        # поднимаем его на клетку вверх.
-        # Предполагается, что условие задачи не нарушается, поскольку
-        # после вычитания 1 из значения "х" и добавления 1 к значению "у",
-        # сумма цифр не изменится с учетом нахождения муравья в крайней
-        # (из доступных) правой точке по оси "х".
-        x -= 1
-        y += 1
-        count += 1  # Считаем проход валидного ряда по оси "у".
-
-        while x != start_x:  # Вложенный цикл для движения влево.
-            x -= 1
-            count += 1
-
-        # Поднимаем муравья на один шаг по оси "у", чтобы продолжить
-        # выполнение общего цикла. Если в результате этого выражения
-        # "у" == 1600, то count не зачтет ряд как валидный.
-        y += 1
-
-    return count
-
+        visited.append((x, y))
+        observed = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
+        to_visit += [
+            node for node in observed
+            if get_sum(*node) < 26 and node not in visited and node not in to_visit
+        ]
+        x, y = to_visit.pop()
+    
+    return len(visited)
 
 if __name__ == '__main__':
-    start_x, start_y = 1000, 1000
-    print(ant_walking(start_x, start_y))
+    x, y = 1000, 1000
+    print(ant_walking(x, y))
